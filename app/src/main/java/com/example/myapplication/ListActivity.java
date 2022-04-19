@@ -23,15 +23,15 @@ import retrofit2.Response;
 
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView mMainList;
-    private AudioAdapter mAdapter;
-    private AudioLab mAudioLab;
+    private RecyclerView       mMainList;
+    private AudioAdapter       mAdapter;
+    private AudioLab           mAudioLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        mMainList = findViewById(R.id.audio_list);
+        mMainList           = findViewById(R.id.audio_list);
         mSwipeRefreshLayout = findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
@@ -58,7 +58,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_audio_list,menu);
+        getMenuInflater().inflate(R.menu.menu_audio_list, menu);
         return true;
     }
 
@@ -66,7 +66,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.btn_add:
-               startActivity(new Intent(ListActivity.this,MainActivity.class));
+                startActivity(new Intent(ListActivity.this, MainActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -86,8 +86,8 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 //    }
 
     private void updateUI() {
-        AudioLab audioLab = AudioLab.get(ListActivity.this);
-        List<RealAudio> audios = audioLab.getRealAudios();
+        AudioLab        audioLab = AudioLab.get(ListActivity.this);
+        List<RealAudio> audios   = audioLab.getRealAudios();
         //Toast.makeText(this, audios.get(1).getTopic(), Toast.LENGTH_SHORT).show();
         if (mAdapter == null) {
             mAdapter = new AudioAdapter(audios);
@@ -98,17 +98,17 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void loadAudios() {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<GetResponse> call = apiInterface.readAudioList();
+        ApiInterface      apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<GetResponse> call         = apiInterface.readAudioList();
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                for(RealAudio audio: response.body().audios){
+                for (RealAudio audio : response.body().audios) {
                     RealAudio ad = new RealAudio();
                     ad.setName(audio.name);
                     ad.setDate(audio.date);
                     ad.setTopic(audio.topic);
-                    ad.setId((int)audio.id);
+                    ad.setId((int) audio.id);
                     ad.setUrl(audio.url);
                     mAudioLab.addAudio(ad);
                 }
@@ -123,6 +123,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 //                mainList.setAdapter(adapterRecycler);
 //                adapterRecycler.addAll(audioList);
             }
+
             @Override
             public void onFailure(Call<GetResponse> call, Throwable t) {
 
@@ -135,7 +136,6 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onRefresh() {
         loadAudios();
     }
-
 
 
     private class AudioHolder extends RecyclerView.ViewHolder
@@ -151,9 +151,9 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
             super(inflater.inflate(R.layout.single_audio_view, parent, false));
             itemView.setOnClickListener(this);
 
-            mNameTextView = itemView.findViewById(R.id.tv_name);
-            mDateTextView =  itemView.findViewById(R.id.tv_date);
-            mTopicTextView =  itemView.findViewById(R.id.tv_topic);
+            mNameTextView  = itemView.findViewById(R.id.tv_name);
+            mDateTextView  = itemView.findViewById(R.id.tv_date);
+            mTopicTextView = itemView.findViewById(R.id.tv_topic);
         }
 
         public void bind(RealAudio realAudio) {
@@ -176,6 +176,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         public AudioAdapter(List<RealAudio> realAudios) {
             mRealAudios = realAudios;
         }
+
         @NonNull
         @Override
         public AudioHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

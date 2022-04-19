@@ -18,13 +18,13 @@ public class FileUtil {
     @SuppressLint("NewApi")
     public static String getPath(Uri uri, Context context) {
         final boolean needToCheckUri = Build.VERSION.SDK_INT >= 19;
-        String selection = null;
-        String[] selectionArgs = null;
+        String        selection      = null;
+        String[]      selectionArgs  = null;
         // Uri is different in versions after KITKAT (Android 4.4), we need to
         // deal with different Uris.
         if (needToCheckUri && DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+                final String   docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 return Environment.getExternalStorageDirectory() + "/" + split[1];
             } else if (isDownloadsDocument(uri)) {
@@ -35,9 +35,9 @@ public class FileUtil {
                 uri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
             } else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+                final String   docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
-                final String type = split[0];
+                final String   type  = split[0];
                 switch (type) {
                     case "image":
                         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -49,7 +49,7 @@ public class FileUtil {
                         uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                         break;
                 }
-                selection = "_id=?";
+                selection     = "_id=?";
                 selectionArgs = new String[]{
                         split[1]
                 };
@@ -88,9 +88,11 @@ public class FileUtil {
     private static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
+
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
+
     private static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }

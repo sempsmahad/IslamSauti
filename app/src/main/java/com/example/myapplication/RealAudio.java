@@ -2,21 +2,23 @@ package com.example.myapplication;
 
 public class RealAudio {
 
-     String name;
-     String date;
-     String topic;
-     String url;
-     int id;
+    String name;
+    String date;
+    String topic;
+    String url;
+    int    id;
 
 
     public RealAudio(RealAudio ad) {
-        this.name = ad.getName();
-        this.date = ad.getDate();
+        this.name  = ad.getName();
+        this.date  = ad.getDate();
         this.topic = ad.getTopic();
-        this.url = ad.getUrl();
-        this.id = ad.getId();
+        this.url   = ad.getUrl();
+        this.id    = ad.getId();
     }
-    public RealAudio(){}
+
+    public RealAudio() {
+    }
 
     public String getName() {
         return name;
