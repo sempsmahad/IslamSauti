@@ -35,22 +35,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,ProgressRequestBody.UploadCallbacks {
-    TextView a_name;
-    EditText etName;
-    EditText etDate;
-    EditText etTopic;
-    Uri path = null;
-    DatePickerDialog datePickerDialog;
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ProgressRequestBody.UploadCallbacks {
+    TextView          a_name;
+    EditText          etName;
+    EditText          etDate;
+    EditText          etTopic;
+    Uri               path     = null;
+    DatePickerDialog  datePickerDialog;
     CircleProgressBar uploadProgressBar;
-    Button btnCancel;
-    Button btnUpload;
-    Button btnPlay;
-    Button btnStop;
-    Call<Audio> call;
-    MediaPlayer mp;
-    Boolean mPlaying = false;
-    int mProgress;
+    Button            btnCancel;
+    Button            btnUpload;
+    Button            btnPlay;
+    Button            btnStop;
+    Call<Audio>       call;
+    MediaPlayer       mp;
+    Boolean           mPlaying = false;
+    int               mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,27 +60,27 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         uploadProgressBar = findViewById(R.id.progressBar);
         uploadProgressBar.setProgressFormatter(new MyProgressFromatter());
         if (savedInstanceState != null) {
-           path = Uri.parse(savedInstanceState.getString("PATH"));
-           onGetPath(path);
-           mPlaying = savedInstanceState.getBoolean("PLAY_STATE",false);
-           mProgress = savedInstanceState.getInt("UPLOAD_PROGRESS",0);
-           uploadProgressBar.setProgress(mProgress);
+            path = Uri.parse(savedInstanceState.getString("PATH"));
+            onGetPath(path);
+            mPlaying  = savedInstanceState.getBoolean("PLAY_STATE", false);
+            mProgress = savedInstanceState.getInt("UPLOAD_PROGRESS", 0);
+            uploadProgressBar.setProgress(mProgress);
         }
-        a_name = findViewById(R.id.tv_audio_name);
-        etName = findViewById(R.id.et_name);
-        etDate = findViewById(R.id.et_date);
-        etTopic = findViewById(R.id.et_topic);
+        a_name    = findViewById(R.id.tv_audio_name);
+        etName    = findViewById(R.id.et_name);
+        etDate    = findViewById(R.id.et_date);
+        etTopic   = findViewById(R.id.et_topic);
         btnCancel = findViewById(R.id.btn_cancel);
         btnUpload = findViewById(R.id.btn_upload);
-        btnStop = findViewById(R.id.btn_stop);
-        btnPlay = findViewById(R.id.btn_play);
+        btnStop   = findViewById(R.id.btn_stop);
+        btnPlay   = findViewById(R.id.btn_play);
 
         Calendar calendar = new GregorianCalendar(Locale.getDefault());
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int      year     = calendar.get(Calendar.YEAR);
+        int      month    = calendar.get(Calendar.MONTH);
+        int      day      = calendar.get(Calendar.DAY_OF_MONTH);
 
-        etDate.setText(day+"/"+month+"/"+year);
+        etDate.setText(day + "/" + month + "/" + year);
         datePickerDialog = new DatePickerDialog(this, MainActivity.this, year, month, day);
         DatePicker datePicker = datePickerDialog.getDatePicker();
         datePicker.setMaxDate(System.currentTimeMillis());
@@ -94,22 +94,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             startActivity(intent);
             return;
         }
-        if (mPlaying){
+        if (mPlaying) {
             mp.start();
             btnStop.setEnabled(true);
             btnPlay.setEnabled(true);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null ) {
-                    path = data.getData();
-                    onGetPath(path);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            path = data.getData();
+            onGetPath(path);
         }
     }
+
     private void onGetPath(Uri mPath) {
-        mp = MediaPlayer.create(MainActivity.this,mPath);
+        mp = MediaPlayer.create(MainActivity.this, mPath);
         String fileName = getFileName(mPath);
         a_name.setText(fileName);
         btnStop.setEnabled(true);
@@ -119,10 +121,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        if (path != null && mp != null){
-        savedInstanceState.putString("PATH",path.toString());
-        savedInstanceState.putBoolean("PLAY_STATE",mp.isPlaying());
-        savedInstanceState.putInt("UPLOAD_PROGRESS",mp.getCurrentPosition());
+        if (path != null && mp != null) {
+            savedInstanceState.putString("PATH", path.toString());
+            savedInstanceState.putBoolean("PLAY_STATE", mp.isPlaying());
+            savedInstanceState.putInt("UPLOAD_PROGRESS", mp.getCurrentPosition());
         }
     }
 
@@ -132,23 +134,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         intent_upload.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent_upload, 1);
     }
+
     public void upload(View view) {
         btnCancel.setVisibility(View.VISIBLE);
         btnUpload.setVisibility(View.INVISIBLE);
 
-        String shekName = etName.getText().toString().trim();
-        String topic = etTopic.getText().toString().trim();
-        String date = etDate.getText().toString().trim();
-        File file = new File(FileUtil.getPath(path,this));
+        String      shekName  = etName.getText().toString().trim();
+        String      topic     = etTopic.getText().toString().trim();
+        String      date      = etDate.getText().toString().trim();
+        File        file      = new File(FileUtil.getPath(path, this));
         RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
-        RequestBody descDate = RequestBody.create(MediaType.parse("text/plain"), date);
-        RequestBody descName = RequestBody.create(MediaType.parse("text/plain"), shekName);
+        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
+        RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
 
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio",MainActivity.this);
-        MultipartBody.Part filePart =MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", MainActivity.this);
+        MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        call = apiInterface.uploadAudio(descName,descDate,descTopic,filePart);
+        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
 
         call.enqueue(new Callback<Audio>() {
             @Override
@@ -158,15 +161,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 } else {
                     Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
                 }
-               }
+            }
+
             @Override
             public void onFailure(Call<Audio> call, Throwable t) {
                 if (call.isCanceled()) {
                     Toast.makeText(MainActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
                     btnCancel.setVisibility(View.INVISIBLE);
                     btnUpload.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
                     btnCancel.setVisibility(View.INVISIBLE);
                     btnUpload.setVisibility(View.VISIBLE);
@@ -174,13 +177,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
     }
+
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        etDate.setText(dayOfMonth +"/"+month+"/"+year);
+        etDate.setText(dayOfMonth + "/" + month + "/" + year);
     }
+
     public void pickDate(View view) {
         datePickerDialog.show();
     }
+
     private String getFileName(Uri urim) throws IllegalArgumentException {
         Cursor cursor = getContentResolver().query(urim, null, null, null, null);
         if (cursor.getCount() <= 0) {
@@ -197,22 +203,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     public void onProgressUpdate(int percentage) {
         uploadProgressBar.setProgress(percentage);
     }
+
     @Override
     public void onError() {
     }
+
     @Override
     public void onFinish() {
         uploadProgressBar.setProgress(100);
     }
+
     public void cancelUpload(View view) {
         call.cancel();
     }
+
     public void play(View view) {
-        if(mp.isPlaying()){
+        if (mp.isPlaying()) {
             btnPlay.setText("play");
             mp.pause();
             btnStop.setEnabled(true);
-        }else{
+        } else {
             btnPlay.setText("pause");
             mp.start();
             btnStop.setEnabled(true);

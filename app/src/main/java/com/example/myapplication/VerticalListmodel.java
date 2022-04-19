@@ -5,15 +5,15 @@ import java.util.ArrayList;
 public class VerticalListmodel {
 
     ArrayList<RealAudio> audios;
-    String name;
-    String topic;
-    String date;
+    String               name;
+    String               topic;
+    String               date;
 
     public VerticalListmodel(ArrayList<RealAudio> audios, String name, String topic, String date) {
         this.audios = audios;
-        this.name = name;
-        this.topic = topic;
-        this.date = date;
+        this.name   = name;
+        this.topic  = topic;
+        this.date   = date;
     }
 
     public ArrayList<RealAudio> getAudios() {

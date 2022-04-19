@@ -3,19 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="bottom"
-    tools:context=".ListActivity">
+    android:background="@android:color/white"
+    tools:context=".ListActivity"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:id="@+id/swipe_container">
+        android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_gravity="bottom"
             android:id="@+id/audio_list"
+            tools:listitem="@layout/single_audio_view"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            tools:listitem="@layout/single_audio_view" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:scrollingCache="true" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

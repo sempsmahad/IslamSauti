@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AudioLab {
-    private static AudioLab sAudioLab;
-    private List<RealAudio> mRealAudios;
+    private static AudioLab        sAudioLab;
+    private        List<RealAudio> mRealAudios;
 
     public static AudioLab get(Context context) {
         if (sAudioLab == null) {
@@ -24,23 +24,25 @@ public class AudioLab {
 //
 //        }
     }
+
     public void addAudio(RealAudio a) {
-        ArrayList<Integer> ids = new ArrayList<>();
-        int count = 0;
-         for(RealAudio realAudio:mRealAudios){
+        ArrayList<Integer> ids   = new ArrayList<>();
+        int                count = 0;
+        for (RealAudio realAudio : mRealAudios) {
             ids.add(realAudio.id);
         }
-         if(!ids.contains(a.getId())){
-             mRealAudios.add(a);
-         }
+        if (!ids.contains(a.getId())) {
+            mRealAudios.add(a);
+        }
     }
+
     public List<RealAudio> getRealAudios() {
         return mRealAudios;
     }
 
     public RealAudio getRealAudio(int id) {
         for (RealAudio realAudio : mRealAudios) {
-            if (realAudio.getId()== id) {
+            if (realAudio.getId() == id) {
                 return realAudio;
             }
         }
