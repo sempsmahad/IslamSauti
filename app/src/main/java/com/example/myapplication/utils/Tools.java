@@ -135,6 +135,10 @@ public class Tools {
         SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyyy");
         return newFormat.format(new Date(dateTime));
     }
+    public static String getFormattedDateStroked(Long dateTime) {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return newFormat.format(new Date(dateTime));
+    }
 
     public static String getFormattedDateSimple(Long dateTime) {
         SimpleDateFormat newFormat = new SimpleDateFormat("MMMM dd, yyyy");

@@ -57,7 +57,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
 
     private ButtonState buttonState = ButtonState.NORMAL;
 
-
     private MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.
     private Handler     mHandler = new Handler();
@@ -76,7 +75,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_checkout);
-
         initToolbar();
         initComponent();
 
@@ -92,7 +90,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
 
     private void initComponent() {
 
-
         parent_view           = findViewById(R.id.parent_view);
         seek_song_progressbar = findViewById(R.id.seek_song_progressbar);
         bt_play               = findViewById(R.id.bt_play);
@@ -100,14 +97,14 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         et_title              = findViewById(R.id.et_title);
         et_description        = findViewById(R.id.et_description);
         et_topic              = findViewById(R.id.et_topic);
-        et_date               = findViewById(R.id.et_date);
+        et_date               = findViewById(R.id.bt_exp_date);
 
         Calendar calendar = new GregorianCalendar(Locale.getDefault());
         int      year     = calendar.get(Calendar.YEAR);
-        int      month    = calendar.get(Calendar.MONTH);
+        int      month    = calendar.get(Calendar.MONTH) + 1;
         int      day      = calendar.get(Calendar.DAY_OF_MONTH);
 
-        et_date.setText(day + "/" + month + "/" + year);
+        et_date.setText(String.format("%02d", day) + "/" + String.format("%02d", month) + "/" + year);
 
         et_date.setOnClickListener(v -> dialogDatePickerLight(v));
 
@@ -152,17 +149,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
             bt_play.setImageResource(R.drawable.ic_play_arrow);
         });
 
-        try {
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            //TODO change this to the selected song
-            AssetFileDescriptor afd = getAssets().openFd("short_music.mp3");
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
-            mp.prepare();
-        } catch (Exception e) {
-            Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
-        }
-
         utils = new MusicUtils();
         // Listeners
         seek_song_progressbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -192,7 +178,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         });
         buttonPlayerAction();
         updateTimerAndSeekbar();
-
 
     }
 
@@ -239,16 +224,13 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         Calendar cur_calender = Calendar.getInstance();
 
         DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, monthOfYear);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        long date = calendar.getTimeInMillis();
-                        ((EditText) v).setText(Tools.getFormattedDateShort(date));
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, monthOfYear);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    long date = calendar.getTimeInMillis();
+                    ((EditText) v).setText(Tools.getFormattedDateStroked(date));
                 },
                 cur_calender.get(Calendar.YEAR),
                 cur_calender.get(Calendar.MONTH),
@@ -299,9 +281,10 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     }
 
     private void onGetPath(Uri mPath) {
-        mp = MediaPlayer.create(AudioUploadFormActivity.this, mPath);
+        loadAudioIntoPlayer(mPath);
         String fileName = getFileName(mPath);
         et_title.setText(fileName);
+
     }
 
     private String getFileName(Uri urim) throws IllegalArgumentException {
@@ -339,5 +322,16 @@ public class AudioUploadFormActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadAudioIntoPlayer(Uri path){
+        try {
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            //TODO change this to the selected song
+            mp.setDataSource(AudioUploadFormActivity.this,path);
+            mp.prepare();
+        } catch (Exception e) {
+            Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
+        }
     }
 }
