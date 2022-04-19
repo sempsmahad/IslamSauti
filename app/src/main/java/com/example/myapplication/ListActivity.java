@@ -11,11 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.activities.AudioUploadFormActivity;
+import com.example.myapplication.utils.Tools;
 
 import java.util.List;
 
@@ -33,13 +35,13 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        initToolbar();
+
         mMainList           = findViewById(R.id.audio_list);
         mSwipeRefreshLayout = findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
-
         mAudioLab = AudioLab.get(this);
-
         loadAudios();
 
 //        SnapAdapter<RealAudio,AudiosViewHolder> adapterRecycler = new SnapAdapter<>(
@@ -50,6 +52,15 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 //
 //        mainList.setAdapter(adapterRecycler);
 //        adapterRecycler.addAll(audioList);
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("lessons");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override
