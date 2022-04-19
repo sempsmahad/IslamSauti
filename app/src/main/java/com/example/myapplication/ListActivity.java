@@ -43,15 +43,6 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         mMainList.setLayoutManager(new LinearLayoutManager(this));
         mAudioLab = AudioLab.get(this);
         loadAudios();
-
-//        SnapAdapter<RealAudio,AudiosViewHolder> adapterRecycler = new SnapAdapter<>(
-//                this,
-//                RealAudio.class, //Model class, matching generic type
-//                R.layout.single_audio_view, // Item Layout
-//                AudiosViewHolder.class);
-//
-//        mainList.setAdapter(adapterRecycler);
-//        adapterRecycler.addAll(audioList);
     }
 
     private void initToolbar() {
@@ -86,18 +77,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
                 return super.onOptionsItemSelected(item);
         }
     }
-    //    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.fragment_crime_list, menu);
-//
-//        MenuItem subtitleItem = menu.findItem(R.id.show_subtitle);
-//        if (mSubtitleVisible) {
-//            subtitleItem.setTitle(R.string.hide_subtitle);
-//        } else {
-//            subtitleItem.setTitle(R.string.show_subtitle);
-//        }
-//    }
+
 
     private void updateUI() {
         AudioLab        audioLab = AudioLab.get(ListActivity.this);
@@ -128,14 +108,6 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
                 updateUI();
                 mSwipeRefreshLayout.setRefreshing(false);
-//                SnapAdapter<RealAudio,AudiosViewHolder> adapterRecycler = new SnapAdapter<>(
-//                        ListActivity.this,
-//                        RealAudio.class, //Model class, matching generic type
-//                        R.layout.single_audio_view, // Item Layout
-//                        AudiosViewHolder.class);
-//
-//                mainList.setAdapter(adapterRecycler);
-//                adapterRecycler.addAll(audioList);
             }
 
             @Override
