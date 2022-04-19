@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/parent_view"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -35,7 +36,7 @@
                 <AutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Full name"
+                    android:hint="Title"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="John Doe M." />
@@ -46,49 +47,55 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_mlarge" />
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
+                <AutoCompleteTextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2">
+                    android:hint="Topic"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="John Doe M." />
 
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Card number"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="4522 **** **** ****" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <View
-                    android:layout_width="@dimen/spacing_large"
-                    android:layout_height="0dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Security code"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="***" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_mlarge" />
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:gravity="start"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:text="@string/medium_lorem_ipsum"
+                    android:textColor="@color/grey_1000" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_mlarge" />
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -101,7 +108,7 @@
                     android:drawableEnd="@drawable/ic_arrow_drop_grey"
                     android:drawableRight="@drawable/ic_arrow_drop_grey"
                     android:editable="false"
-                    android:hint="Expiration date"
+                    android:hint="Creation Date"
                     android:focusable="false"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -109,132 +116,202 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_mlarge" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
+                android:id="@+id/player_control"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@android:color/black"
+                android:orientation="vertical"
+                >
 
-                <AutoCompleteTextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Address"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="1170 Benson Lake Dr" />
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/spacing_large">
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="@dimen/spacing_mlarge" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tv_song_current_duration"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="City"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Grapeview" />
+                        android:text="1:20"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/grey_60" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <ImageButton
+                        android:id="@+id/bt_prev"
+                        android:layout_width="0dp"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="controlClick"
+                        app:tint="@color/grey_40"
+                        app:srcCompat="@drawable/ic_skip_previous" />
 
-                <View
-                    android:layout_width="@dimen/spacing_large"
-                    android:layout_height="0dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/bt_play"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="State"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="WA" />
+                        android:layout_margin="@dimen/spacing_medium"
+                        android:clickable="true"
+                        android:tint="@android:color/white"
+                        app:backgroundTint="@color/red_500"
+                        app:elevation="2dp"
+                        app:fabSize="normal"
+                        app:rippleColor="@android:color/white"
+                        app:srcCompat="@drawable/ic_play_arrow" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <ImageButton
+                        android:id="@+id/bt_next"
+                        android:layout_width="0dp"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="controlClick"
+                        app:tint="@color/grey_40"
+                        app:srcCompat="@drawable/ic_skip_next" />
+
+                    <TextView
+                        android:id="@+id/tv_song_total_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4:20"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/grey_60" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/bt_repeat"
+                        android:layout_width="?attr/actionBarSize"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="controlClick"
+                        app:tint="@color/grey_40"
+                        app:srcCompat="@drawable/ic_repeat" />
+
+                    <androidx.appcompat.widget.AppCompatSeekBar
+                        android:id="@+id/seek_song_progressbar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:progress="0"
+                        android:progressDrawable="@drawable/seek_progress_red_small"
+                        android:thumb="@drawable/seek_thumb_accent_outline" />
+
+                    <ImageButton
+                        android:id="@+id/bt_shuffle"
+                        android:layout_width="?attr/actionBarSize"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="controlClick"
+                        app:tint="@color/grey_40"
+                        app:srcCompat="@drawable/ic_shuffle" />
+
+                </LinearLayout>
+
+
             </LinearLayout>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_mlarge" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="@dimen/spacing_xxlarge"
+                android:layout_marginHorizontal="@dimen/spacing_middle"
+                android:layout_marginVertical="@dimen/spacing_middle"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2">
+                <RelativeLayout
+                    android:id="@+id/button_action"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true">
 
-                    <AutoCompleteTextView
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentBottom="true"
+                        android:indeterminate="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:progress="50"
+                        android:progressDrawable="@drawable/progressbar_green" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Postal code"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="98546" />
+                        android:layout_centerInParent="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_medium">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="0dp" />
 
-                <View
-                    android:layout_width="@dimen/spacing_large"
-                    android:layout_height="0dp" />
+                        <TextView
+                            android:id="@+id/tv_download"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DOWNLOAD"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="@android:color/white" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
 
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Country"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="USA" />
+                        <TextView
+                            android:id="@+id/tv_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/spacing_middle"
+                            android:text="10%"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                            android:textColor="@android:color/white"
+                            app:fontFamily="sans-serif-medium" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+                        <ImageView
+                            android:id="@+id/icon_download"
+                            android:layout_width="@dimen/spacing_mxlarge"
+                            android:layout_height="@dimen/spacing_mxlarge"
+                            android:layout_marginHorizontal="@dimen/spacing_middle"
+                            app:srcCompat="@drawable/ic_baseline_cloud_upload_24"
+                            app:tint="@android:color/white" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_mlarge" />
 
-            <Button
-                android:id="@+id/bt_submit"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="-4dp"
-                android:layout_marginRight="-4dp"
-                android:background="@drawable/btn_rect_primary"
-                android:text="PROCESS"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@android:color/white" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="@dimen/spacing_mlarge" />
 
         </LinearLayout>
 

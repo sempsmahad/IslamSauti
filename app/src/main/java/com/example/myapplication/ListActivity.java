@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.myapplication.activities.AudioUploadFormActivity;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -66,7 +68,8 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.btn_add:
-                startActivity(new Intent(ListActivity.this, MainActivity.class));
+//                startActivity(new Intent(ListActivity.this, MainActivity.class));
+                startActivity(new Intent(ListActivity.this, AudioUploadFormActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
