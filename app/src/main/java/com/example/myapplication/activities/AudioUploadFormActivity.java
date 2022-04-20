@@ -1,22 +1,32 @@
 package com.example.myapplication.activities;
 
-import android.content.res.AssetFileDescriptor;
+import android.content.Intent;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import com.example.myapplication.ApiClient;
+import com.example.myapplication.ApiInterface;
+import com.example.myapplication.Audio;
+import com.example.myapplication.FileUtil;
+import com.example.myapplication.MainActivity;
+import com.example.myapplication.ProgressRequestBody;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.Tools;
@@ -24,9 +34,48 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
-public class AudioUploadFormActivity extends AppCompatActivity {
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class AudioUploadFormActivity extends AppCompatActivity implements ProgressRequestBody.UploadCallbacks {
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+        progress_bar.setProgress(percentage);
+        buttonState = buttonState.LOADING;
+        progress_bar.setProgress(percentage);
+        tv_status.setText(percentage + " %");
+        tv_status.setVisibility(View.VISIBLE);
+        icon_download.setVisibility(View.GONE);
+        tv_download.setText("UPLOADING...");
+        button_action.setClickable(false);
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onFinish() {
+        buttonState = buttonState.DONE;
+        progress_bar.setProgress(0);
+        tv_status.setVisibility(View.GONE);
+        tv_download.setText("UPLOADED");
+        button_action.setClickable(true);
+        icon_download.setVisibility(View.VISIBLE);
+        icon_download.setImageResource(R.drawable.ic_download_done);
+        card_view.setCardBackgroundColor(getResources().getColor(R.color.green_500));
+    }
 
     enum ButtonState {
         NORMAL, LOADING, DONE
@@ -35,7 +84,9 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     private View                 parent_view;
     private AppCompatSeekBar     seek_song_progressbar;
     private FloatingActionButton bt_play;
+    private FloatingActionButton btn_attach;
     private TextView             tv_song_current_duration, tv_song_total_duration;
+    private EditText et_title, et_description, et_topic, et_sheikh_name, et_date;
 
     private ProgressBar progress_bar;
     private Handler     mUploadBtnHandler;
@@ -44,8 +95,11 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     private ImageView   icon_download;
     private CardView    card_view;
     private Runnable    runnable;
-    private ButtonState buttonState = ButtonState.LOADING;
+    private Uri         path = null;
+    private Call<Audio> call;
 
+
+    private ButtonState buttonState = ButtonState.NORMAL;
 
     private MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.
@@ -65,7 +119,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_checkout);
-
         initToolbar();
         initComponent();
 
@@ -80,12 +133,25 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     }
 
     private void initComponent() {
-        (findViewById(R.id.bt_exp_date)).setOnClickListener(v -> dialogDatePickerLight(v));
-
 
         parent_view           = findViewById(R.id.parent_view);
         seek_song_progressbar = findViewById(R.id.seek_song_progressbar);
         bt_play               = findViewById(R.id.bt_play);
+        btn_attach            = findViewById(R.id.btn_attach);
+        et_title              = findViewById(R.id.et_title);
+        et_description        = findViewById(R.id.et_description);
+        et_topic              = findViewById(R.id.et_topic);
+        et_sheikh_name        = findViewById(R.id.et_sheikh_name);
+        et_date               = findViewById(R.id.bt_exp_date);
+
+        Calendar calendar = new GregorianCalendar(Locale.getDefault());
+        int      year     = calendar.get(Calendar.YEAR);
+        int      month    = calendar.get(Calendar.MONTH) + 1;
+        int      day      = calendar.get(Calendar.DAY_OF_MONTH);
+
+        et_date.setText(String.format("%02d", day) + "/" + String.format("%02d", month) + "/" + year);
+
+        et_date.setOnClickListener(v -> dialogDatePickerLight(v));
 
         mUploadBtnHandler = new Handler(this.getMainLooper());
         progress_bar      = findViewById(R.id.progress_bar);
@@ -101,12 +167,19 @@ public class AudioUploadFormActivity extends AppCompatActivity {
             if (buttonState == ButtonState.DONE) {
                 onResetClicked(v);
             } else {
-                runProgressDeterminateCircular();
+//                runProgressDeterminateCircular();
+                upload(v);
             }
+        });
+        btn_attach.setOnClickListener(v -> {
+            Intent intent_upload = new Intent();
+            intent_upload.setType("audio/*");
+            intent_upload.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent_upload, 1);
         });
 
 
-        new Handler(this.getMainLooper()).postDelayed(this::runProgressDeterminateCircular, 500);
+//        new Handler(this.getMainLooper()).postDelayed(this::runProgressDeterminateCircular, 500);
 
         // set Progress bar values
         seek_song_progressbar.setProgress(0);
@@ -121,17 +194,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
             // Changing button image to play button
             bt_play.setImageResource(R.drawable.ic_play_arrow);
         });
-
-        try {
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            //TODO change this to the selected song
-            AssetFileDescriptor afd = getAssets().openFd("short_music.mp3");
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
-            mp.prepare();
-        } catch (Exception e) {
-            Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
-        }
 
         utils = new MusicUtils();
         // Listeners
@@ -163,7 +225,6 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         buttonPlayerAction();
         updateTimerAndSeekbar();
 
-
     }
 
     private void runProgressDeterminateCircular() {
@@ -175,13 +236,13 @@ public class AudioUploadFormActivity extends AppCompatActivity {
                 tv_status.setText(progress + " %");
                 tv_status.setVisibility(View.VISIBLE);
                 icon_download.setVisibility(View.GONE);
-                tv_download.setText("DOWNLOADING...");
+                tv_download.setText("UPLOADING...");
                 button_action.setClickable(false);
                 if (progress > 100) {
                     buttonState = buttonState.DONE;
                     progress_bar.setProgress(0);
                     tv_status.setVisibility(View.GONE);
-                    tv_download.setText("DOWNLOADED");
+                    tv_download.setText("UPLOADED");
                     button_action.setClickable(true);
                     icon_download.setVisibility(View.VISIBLE);
                     icon_download.setImageResource(R.drawable.ic_download_done);
@@ -209,16 +270,13 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         Calendar cur_calender = Calendar.getInstance();
 
         DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, monthOfYear);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        long date = calendar.getTimeInMillis();
-                        ((EditText) v).setText(Tools.getFormattedDateShort(date));
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, monthOfYear);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    long date = calendar.getTimeInMillis();
+                    ((EditText) v).setText(Tools.getFormattedDateStroked(date));
                 },
                 cur_calender.get(Calendar.YEAR),
                 cur_calender.get(Calendar.MONTH),
@@ -259,6 +317,34 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         seek_song_progressbar.setProgress(progress);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            path = data.getData();
+            onGetPath(path);
+        }
+    }
+
+    private void onGetPath(Uri mPath) {
+        loadAudioIntoPlayer(mPath);
+        String fileName = getFileName(mPath);
+        et_title.setText(fileName);
+
+    }
+
+    private String getFileName(Uri urim) throws IllegalArgumentException {
+        Cursor cursor = getContentResolver().query(urim, null, null, null, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            throw new IllegalArgumentException("Can't obtain file name, cursor is empty");
+        }
+        cursor.moveToFirst();
+        String fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+        cursor.close();
+        return fileName;
+    }
+
     /**
      * Play button click event plays a song and changes button to pause image
      * pauses a song and changes button to play image
@@ -279,6 +365,57 @@ public class AudioUploadFormActivity extends AppCompatActivity {
                     bt_play.setImageResource(R.drawable.ic_pause);
                     // Updating progress bar
                     mHandler.post(mUpdateTimeTask);
+                }
+            }
+        });
+    }
+
+    private void loadAudioIntoPlayer(Uri path) {
+        try {
+            mp.reset();
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            //TODO change this to the selected song
+            mp.setDataSource(AudioUploadFormActivity.this, path);
+            mp.prepare();
+        } catch (Exception e) {
+            Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    public void upload(View view) {
+        String shekName    = et_sheikh_name.getText().toString().trim();
+        String topic       = et_topic.getText().toString().trim();
+        String date        = et_date.getText().toString().trim();
+        String description = et_description.getText().toString().trim();
+
+        File        file      = new File(FileUtil.getPath(path, this));
+        RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
+        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
+        RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
+        RequestBody descDesc  = RequestBody.create(MediaType.parse("text/plain"), description);
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", AudioUploadFormActivity.this);
+        MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
+
+        call.enqueue(new Callback<Audio>() {
+            @Override
+            public void onResponse(Call<Audio> call, Response<Audio> response) {
+                if (!response.body().error) {
+                    Toast.makeText(AudioUploadFormActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Audio> call, Throwable t) {
+                if (call.isCanceled()) {
+                    Toast.makeText(AudioUploadFormActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

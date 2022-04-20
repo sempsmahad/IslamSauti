@@ -15,7 +15,7 @@ public class Audio {
     @SerializedName("response")
     private String response;
 
-    boolean error;
+    public boolean error;
 
     public String getName() {
         return name;
