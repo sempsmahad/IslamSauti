@@ -85,24 +85,24 @@ public class Tools {
 
     public static void setSystemBarLight(Activity act) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View view = act.findViewById(android.R.id.content);
-            int flags = view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            View view  = act.findViewById(android.R.id.content);
+            int  flags = view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             view.setSystemUiVisibility(flags);
         }
     }
 
     public static void setSystemBarDark(Activity act) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View view = act.findViewById(android.R.id.content);
-            int flags = view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            View view  = act.findViewById(android.R.id.content);
+            int  flags = view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             view.setSystemUiVisibility(flags);
         }
     }
 
     public static void setSystemBarLightDialog(Dialog dialog) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View view = dialog.findViewById(android.R.id.content);
-            int flags = view.getSystemUiVisibility();
+            View view  = dialog.findViewById(android.R.id.content);
+            int  flags = view.getSystemUiVisibility();
             flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             view.setSystemUiVisibility(flags);
         }
@@ -126,15 +126,11 @@ public class Tools {
         }
     }
 
-
-
-
-
-
     public static String getFormattedDateShort(Long dateTime) {
         SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyyy");
         return newFormat.format(new Date(dateTime));
     }
+
     public static String getFormattedDateStroked(Long dateTime) {
         SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
         return newFormat.format(new Date(dateTime));
@@ -171,7 +167,7 @@ public class Tools {
 
     public static void copyToClipboard(Context context, String data) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("clipboard", data);
+        ClipData         clip      = ClipData.newPlainText("clipboard", data);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_SHORT).show();
     }
@@ -262,14 +258,14 @@ public class Tools {
 
     public static String toCamelCase(String input) {
         input = input.toLowerCase();
-        StringBuilder titleCase = new StringBuilder();
-        boolean nextTitleCase = true;
+        StringBuilder titleCase     = new StringBuilder();
+        boolean       nextTitleCase = true;
 
         for (char c : input.toCharArray()) {
             if (Character.isSpaceChar(c)) {
                 nextTitleCase = true;
             } else if (nextTitleCase) {
-                c = Character.toTitleCase(c);
+                c             = Character.toTitleCase(c);
                 nextTitleCase = false;
             }
 
@@ -281,8 +277,8 @@ public class Tools {
 
     public static String insertPeriodically(String text, String insert, int period) {
         StringBuilder builder = new StringBuilder(text.length() + insert.length() * (text.length() / period) + 1);
-        int index = 0;
-        String prefix = "";
+        int           index   = 0;
+        String        prefix  = "";
         while (index < text.length()) {
             builder.append(prefix);
             prefix = insert;
@@ -294,7 +290,7 @@ public class Tools {
 
 
     public static void rateAction(Activity activity) {
-        Uri uri = Uri.parse("market://details?id=" + activity.getPackageName());
+        Uri    uri        = Uri.parse("market://details?id=" + activity.getPackageName());
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
         try {
             activity.startActivity(goToMarket);
@@ -308,7 +304,7 @@ public class Tools {
      */
     public static String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
+        String model        = Build.MODEL;
         if (model.startsWith(manufacturer)) {
             return model;
         } else {
@@ -323,18 +319,12 @@ public class Tools {
     public static int getVersionCode(Context ctx) {
         try {
             PackageManager manager = ctx.getPackageManager();
-            PackageInfo info = manager.getPackageInfo(ctx.getPackageName(), 0);
+            PackageInfo    info    = manager.getPackageInfo(ctx.getPackageName(), 0);
             return info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             return -1;
         }
     }
-
-
-
-
-
-
 
 
     public static String getDeviceID(Context context) {
@@ -364,7 +354,7 @@ public class Tools {
 
     private static String appendQuery(String uri, String appendQuery) {
         try {
-            URI oldUri = new URI(uri);
+            URI    oldUri   = new URI(uri);
             String newQuery = oldUri.getQuery();
             if (newQuery == null) {
                 newQuery = appendQuery;
@@ -385,7 +375,7 @@ public class Tools {
 
     public static String getHostName(String url) {
         try {
-            URI uri = new URI(url);
+            URI    uri     = new URI(url);
             String new_url = uri.getHost();
             if (!new_url.startsWith("www.")) new_url = "www." + new_url;
             return new_url;

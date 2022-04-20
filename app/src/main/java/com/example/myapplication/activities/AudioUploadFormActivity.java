@@ -1,7 +1,6 @@
 package com.example.myapplication.activities;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -15,13 +14,19 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import com.example.myapplication.ApiClient;
+import com.example.myapplication.ApiInterface;
+import com.example.myapplication.Audio;
+import com.example.myapplication.FileUtil;
 import com.example.myapplication.MainActivity;
+import com.example.myapplication.ProgressRequestBody;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.Tools;
@@ -29,11 +34,48 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class AudioUploadFormActivity extends AppCompatActivity {
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class AudioUploadFormActivity extends AppCompatActivity implements ProgressRequestBody.UploadCallbacks {
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+        progress_bar.setProgress(percentage);
+        buttonState = buttonState.LOADING;
+        progress_bar.setProgress(percentage);
+        tv_status.setText(percentage + " %");
+        tv_status.setVisibility(View.VISIBLE);
+        icon_download.setVisibility(View.GONE);
+        tv_download.setText("UPLOADING...");
+        button_action.setClickable(false);
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onFinish() {
+        buttonState = buttonState.DONE;
+        progress_bar.setProgress(0);
+        tv_status.setVisibility(View.GONE);
+        tv_download.setText("UPLOADED");
+        button_action.setClickable(true);
+        icon_download.setVisibility(View.VISIBLE);
+        icon_download.setImageResource(R.drawable.ic_download_done);
+        card_view.setCardBackgroundColor(getResources().getColor(R.color.green_500));
+    }
 
     enum ButtonState {
         NORMAL, LOADING, DONE
@@ -44,16 +86,18 @@ public class AudioUploadFormActivity extends AppCompatActivity {
     private FloatingActionButton bt_play;
     private FloatingActionButton btn_attach;
     private TextView             tv_song_current_duration, tv_song_total_duration;
-    private EditText et_title, et_description, et_topic, et_date;
+    private EditText et_title, et_description, et_topic, et_sheikh_name, et_date;
 
     private ProgressBar progress_bar;
     private Handler     mUploadBtnHandler;
     private View        button_action;
     private TextView    tv_status, tv_download;
-    private ImageView icon_download;
-    private CardView  card_view;
-    private Runnable  runnable;
-    private Uri       path = null;
+    private ImageView   icon_download;
+    private CardView    card_view;
+    private Runnable    runnable;
+    private Uri         path = null;
+    private Call<Audio> call;
+
 
     private ButtonState buttonState = ButtonState.NORMAL;
 
@@ -97,6 +141,7 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         et_title              = findViewById(R.id.et_title);
         et_description        = findViewById(R.id.et_description);
         et_topic              = findViewById(R.id.et_topic);
+        et_sheikh_name        = findViewById(R.id.et_sheikh_name);
         et_date               = findViewById(R.id.bt_exp_date);
 
         Calendar calendar = new GregorianCalendar(Locale.getDefault());
@@ -122,7 +167,8 @@ public class AudioUploadFormActivity extends AppCompatActivity {
             if (buttonState == ButtonState.DONE) {
                 onResetClicked(v);
             } else {
-                runProgressDeterminateCircular();
+//                runProgressDeterminateCircular();
+                upload(v);
             }
         });
         btn_attach.setOnClickListener(v -> {
@@ -133,7 +179,7 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         });
 
 
-        new Handler(this.getMainLooper()).postDelayed(this::runProgressDeterminateCircular, 500);
+//        new Handler(this.getMainLooper()).postDelayed(this::runProgressDeterminateCircular, 500);
 
         // set Progress bar values
         seek_song_progressbar.setProgress(0);
@@ -190,13 +236,13 @@ public class AudioUploadFormActivity extends AppCompatActivity {
                 tv_status.setText(progress + " %");
                 tv_status.setVisibility(View.VISIBLE);
                 icon_download.setVisibility(View.GONE);
-                tv_download.setText("DOWNLOADING...");
+                tv_download.setText("UPLOADING...");
                 button_action.setClickable(false);
                 if (progress > 100) {
                     buttonState = buttonState.DONE;
                     progress_bar.setProgress(0);
                     tv_status.setVisibility(View.GONE);
-                    tv_download.setText("DOWNLOADED");
+                    tv_download.setText("UPLOADED");
                     button_action.setClickable(true);
                     icon_download.setVisibility(View.VISIBLE);
                     icon_download.setImageResource(R.drawable.ic_download_done);
@@ -324,14 +370,54 @@ public class AudioUploadFormActivity extends AppCompatActivity {
         });
     }
 
-    private void loadAudioIntoPlayer(Uri path){
+    private void loadAudioIntoPlayer(Uri path) {
         try {
+            mp.reset();
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             //TODO change this to the selected song
-            mp.setDataSource(AudioUploadFormActivity.this,path);
+            mp.setDataSource(AudioUploadFormActivity.this, path);
             mp.prepare();
         } catch (Exception e) {
             Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    public void upload(View view) {
+        String shekName    = et_sheikh_name.getText().toString().trim();
+        String topic       = et_topic.getText().toString().trim();
+        String date        = et_date.getText().toString().trim();
+        String description = et_description.getText().toString().trim();
+
+        File        file      = new File(FileUtil.getPath(path, this));
+        RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
+        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
+        RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
+        RequestBody descDesc  = RequestBody.create(MediaType.parse("text/plain"), description);
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", AudioUploadFormActivity.this);
+        MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
+
+        call.enqueue(new Callback<Audio>() {
+            @Override
+            public void onResponse(Call<Audio> call, Response<Audio> response) {
+                if (!response.body().error) {
+                    Toast.makeText(AudioUploadFormActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Audio> call, Throwable t) {
+                if (call.isCanceled()) {
+                    Toast.makeText(AudioUploadFormActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }
