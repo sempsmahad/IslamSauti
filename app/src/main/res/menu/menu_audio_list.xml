@@ -9,4 +9,12 @@
         android:title="add"
         android:visible="true"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/btn_clear"
+        android:enabled="true"
+        android:icon="@drawable/ic_delete"
+        android:title="clear input"
+        android:visible="false"
+        app:showAsAction="always" />
+
 </menu>

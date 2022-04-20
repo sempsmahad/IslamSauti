@@ -180,12 +180,14 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/spacing_medium"
                             android:clickable="true"
+                            android:enabled="false"
                             android:tint="@android:color/white"
                             app:backgroundTint="@color/red_500"
                             app:elevation="2dp"
                             app:fabSize="normal"
                             app:rippleColor="@android:color/white"
-                            app:srcCompat="@drawable/ic_play_arrow" />
+                            app:srcCompat="@drawable/ic_play_arrow"
+                            android:focusable="true" />
 
                         <ImageButton
                             android:clickable="false"
