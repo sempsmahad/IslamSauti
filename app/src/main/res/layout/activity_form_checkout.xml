@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/AppTheme.Material"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,40 +35,40 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:hint="Title">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/et_title"
+                    <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Title"
-                        android:maxLines="1"
-                        android:singleLine="true" />
+                        android:id="@+id/et_title"
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="@dimen/spacing_mlarge" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:hint="Topic">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/et_topic"
+                        <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Topic"
-                            android:maxLines="1"
-                            android:singleLine="true"/>
+                            android:id="@+id/et_topic"
+                            />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,50 +77,39 @@
                         android:layout_height="0dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:hint="Name (Sheikh)">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/et_sheikh_name"
+                        <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Name (Sheikh)"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
+                            android:id="@+id/et_sheikh_name"
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                   <View
                     android:layout_width="0dp"
                     android:layout_height="@dimen/spacing_mlarge" />
 
-
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="5dp"
-                    android:text="Description"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_middle"
-                    app:hintEnabled="false">
+                    android:hint="Description">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_description"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/et_description"
                         android:gravity="start"
                         android:inputType="textMultiLine"
                         android:lines="4"
-                        android:textColor="@color/grey_1000" />
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,23 +117,24 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/spacing_mlarge" />
 
-
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:hint="Creation Date">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/bt_exp_date"
+                    <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/bt_exp_date"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Aug 15, 2023"
                         android:drawableEnd="@drawable/ic_arrow_drop_grey"
                         android:drawableRight="@drawable/ic_arrow_drop_grey"
                         android:editable="false"
                         android:focusable="false"
-                        android:hint="Creation Date"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Aug 15, 2023" />
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -318,7 +309,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/spacing_middle"
-                                android:text="10%"
+                                android:text="0%"
+                                android:visibility="gone"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@android:color/white"
                                 app:fontFamily="sans-serif-medium" />
