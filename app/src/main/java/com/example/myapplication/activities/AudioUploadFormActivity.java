@@ -285,7 +285,6 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         //set dark light
         datePicker.setThemeDark(false);
         datePicker.setAccentColor(getResources().getColor(R.color.colorPrimary));
-        datePicker.setMinDate(cur_calender);
         datePicker.show(getFragmentManager(), "Expiration Date");
     }
 
