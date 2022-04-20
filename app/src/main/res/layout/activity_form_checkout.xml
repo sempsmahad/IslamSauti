@@ -180,7 +180,6 @@
                             android:layout_height="?attr/actionBarSize"
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:onClick="controlClick"
                             app:srcCompat="@drawable/ic_skip_previous"
                             app:tint="@color/grey_40" />
 
@@ -204,7 +203,6 @@
                             android:layout_height="?attr/actionBarSize"
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:onClick="controlClick"
                             app:srcCompat="@drawable/ic_skip_next"
                             app:tint="@color/grey_40" />
 
@@ -231,7 +229,6 @@
                             android:layout_width="?attr/actionBarSize"
                             android:layout_height="?attr/actionBarSize"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:onClick="controlClick"
                             app:srcCompat="@drawable/ic_repeat"
                             app:tint="@color/grey_40" />
 
@@ -250,7 +247,6 @@
                             android:layout_width="?attr/actionBarSize"
                             android:layout_height="?attr/actionBarSize"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:onClick="controlClick"
                             app:srcCompat="@drawable/ic_shuffle"
                             app:tint="@color/grey_40" />
 
