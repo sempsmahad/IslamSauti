@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.OpenableColumns;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
@@ -25,6 +28,7 @@ import com.example.myapplication.ApiClient;
 import com.example.myapplication.ApiInterface;
 import com.example.myapplication.Audio;
 import com.example.myapplication.FileUtil;
+import com.example.myapplication.ListActivity;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.ProgressRequestBody;
 import com.example.myapplication.R;
@@ -132,6 +136,26 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         Tools.setSystemBarColor(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_audio_list, menu);
+        menu.findItem(R.id.btn_add).setVisible(false);
+        menu.findItem(R.id.btn_clear).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.btn_clear:
+                mp.reset();
+                bt_play.setEnabled(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void initComponent() {
 
         parent_view           = findViewById(R.id.parent_view);
@@ -168,7 +192,11 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
                 onResetClicked(v);
             } else {
 //                runProgressDeterminateCircular();
-                upload(v);
+                try {
+                    upload(v);
+                } catch (NullPointerException e){
+                    Snackbar.make(parent_view, "Please first select an audio file", Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         btn_attach.setOnClickListener(v -> {
@@ -200,7 +228,6 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         seek_song_progressbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
             }
 
             @Override
@@ -376,6 +403,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
             //TODO change this to the selected song
             mp.setDataSource(AudioUploadFormActivity.this, path);
             mp.prepare();
+            bt_play.setEnabled(true);
         } catch (Exception e) {
             Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
         }
