@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".ListActivity"
+    tools:context=".ui.ListActivity"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -22,7 +22,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_gravity="bottom"
             android:id="@+id/audio_list"
-            tools:listitem="@layout/single_audio_view"
+            tools:listitem="@layout/layout_summon_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
