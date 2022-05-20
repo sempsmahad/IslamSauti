@@ -24,6 +24,12 @@ data class Summon(
     @field:SerializedName("response")
     val response: String? = null,
 
+    @field:SerializedName("description")
+    val description: String? = null,
+
+    @field:SerializedName("path")
+    val path: String? = null,
+
     var error: Boolean = false
 
 )

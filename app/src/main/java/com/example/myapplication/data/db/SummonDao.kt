@@ -15,6 +15,9 @@ import com.example.myapplication.data.model.Summon
 @Dao
 abstract class SummonDao {
 
+    @Query("SELECT * FROM summon")
+    abstract fun getSummons(): LiveData<List<Summon>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(vararg summons: Summon)
 

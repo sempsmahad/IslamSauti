@@ -64,7 +64,6 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
 
     @Override
     public void onError() {
-
     }
 
     @Override
