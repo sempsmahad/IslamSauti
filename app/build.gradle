@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileOptions {
@@ -44,7 +45,13 @@ dependencies {
 
     // third party dependencies -------------------------------------------------------------------
     implementation 'com.wdullaer:materialdatetimepicker:3.2.0'         // date & time picker
-    implementation 'com.balysv:material-ripple:1.0.2'                  // ripple effect
+    implementation 'com.balysv:material-ripple:1.0.2'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // ripple effect
 
 
+}
+repositories {
+    mavenCentral()
 }
