@@ -1,4 +1,4 @@
-package com.example.myapplication.activities;
+package com.example.myapplication.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,13 +24,11 @@ import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.example.myapplication.ApiClient;
-import com.example.myapplication.ApiInterface;
-import com.example.myapplication.Audio;
-import com.example.myapplication.FileUtil;
-import com.example.myapplication.ListActivity;
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.ProgressRequestBody;
+import com.example.myapplication.data.ApiClient;
+import com.example.myapplication.data.ApiInterface;
+import com.example.myapplication.data.model.Summon;
+import com.example.myapplication.utils.FileUtil;
+import com.example.myapplication.utils.ProgressRequestBody;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.Tools;
@@ -99,8 +97,8 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     private ImageView   icon_download;
     private CardView    card_view;
     private Runnable    runnable;
-    private Uri         path = null;
-    private Call<Audio> call;
+    private Uri          path = null;
+    private Call<Summon> call;
 
 
     private ButtonState buttonState = ButtonState.NORMAL;
@@ -427,10 +425,10 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
 
-        call.enqueue(new Callback<Audio>() {
+        call.enqueue(new Callback<Summon>() {
             @Override
-            public void onResponse(Call<Audio> call, Response<Audio> response) {
-                if (!response.body().error) {
+            public void onResponse(Call<Summon> call, Response<Summon> response) {
+                if (!response.body().getError()) {
                     Toast.makeText(AudioUploadFormActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
@@ -438,7 +436,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
             }
 
             @Override
-            public void onFailure(Call<Audio> call, Throwable t) {
+            public void onFailure(Call<Summon> call, Throwable t) {
                 if (call.isCanceled()) {
                     Toast.makeText(AudioUploadFormActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
                 } else {

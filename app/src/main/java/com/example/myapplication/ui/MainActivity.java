@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
@@ -22,6 +22,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.example.myapplication.utils.FileUtil;
+import com.example.myapplication.utils.MyProgressFromatter;
+import com.example.myapplication.utils.ProgressRequestBody;
+import com.example.myapplication.R;
+import com.example.myapplication.data.ApiClient;
+import com.example.myapplication.data.ApiInterface;
+import com.example.myapplication.data.model.Summon;
 
 import java.io.File;
 import java.util.Calendar;
@@ -46,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     Button            btnCancel;
     Button            btnUpload;
     Button            btnPlay;
-    Button            btnStop;
-    Call<Audio>       call;
-    MediaPlayer       mp;
+    Button       btnStop;
+    Call<Summon> call;
+    MediaPlayer  mp;
     Boolean           mPlaying = false;
     int               mProgress;
 
@@ -153,10 +160,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
 
-        call.enqueue(new Callback<Audio>() {
+        call.enqueue(new Callback<Summon>() {
             @Override
-            public void onResponse(Call<Audio> call, Response<Audio> response) {
-                if (!response.body().error) {
+            public void onResponse(Call<Summon> call, Response<Summon> response) {
+                if (!response.body().getError()) {
                     Toast.makeText(MainActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
@@ -164,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
 
             @Override
-            public void onFailure(Call<Audio> call, Throwable t) {
+            public void onFailure(Call<Summon> call, Throwable t) {
                 if (call.isCanceled()) {
                     Toast.makeText(MainActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
                     btnCancel.setVisibility(View.INVISIBLE);
