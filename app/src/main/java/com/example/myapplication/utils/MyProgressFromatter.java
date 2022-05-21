@@ -2,7 +2,7 @@ package com.example.myapplication.utils;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
 
-class MyProgressFromatter implements CircleProgressBar.ProgressFormatter {
+public class MyProgressFromatter implements CircleProgressBar.ProgressFormatter {
     private static final String DEFAULT_PATTERN = "%d%%";
 
     @Override

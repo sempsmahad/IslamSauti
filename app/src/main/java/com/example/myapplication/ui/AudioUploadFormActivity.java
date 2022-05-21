@@ -192,7 +192,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
 //                runProgressDeterminateCircular();
                 try {
                     upload(v);
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     Snackbar.make(parent_view, "Please first select an audio file", Snackbar.LENGTH_SHORT).show();
                 }
             }

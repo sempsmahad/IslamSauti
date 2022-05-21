@@ -8,5 +8,11 @@ public class GetResponse {
     @SerializedName("audios")
     List<RealAudio> audios;
 
+    public List<RealAudio> getAudios() {
+        return audios;
+    }
 
+    public void setAudios(List<RealAudio> audios) {
+        this.audios = audios;
+    }
 }

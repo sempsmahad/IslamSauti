@@ -33,8 +33,8 @@ import retrofit2.Response;
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView       mMainList;
-    private AudioAdapter mAdapter;
-    private AudioLab     mAudioLab;
+    private AudioAdapter       mAdapter;
+    private AudioLab           mAudioLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
         mAudioLab = AudioLab.get(this);
-        loadAudios();
+//        loadAudios();
     }
 
     private void initToolbar() {
@@ -102,13 +102,13 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                for (RealAudio audio : response.body().audios) {
+                for (RealAudio audio : response.body().getAudios()) {
                     RealAudio ad = new RealAudio();
-                    ad.setName(audio.name);
-                    ad.setDate(audio.date);
-                    ad.setTopic(audio.topic);
-                    ad.setId((int) audio.id);
-                    ad.setUrl(audio.url);
+                    ad.setName(audio.getName());
+                    ad.setDate(audio.getDate());
+                    ad.setTopic(audio.getTopic());
+                    ad.setId((int) audio.getId());
+                    ad.setUrl(audio.getUrl());
                     mAudioLab.addAudio(ad);
                 }
                 updateUI();
@@ -125,7 +125,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        loadAudios();
+//        loadAudios();
     }
 
 
