@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.myapplication.activities.AudioUploadFormActivity;
+import com.example.myapplication.api.ApiClient;
+import com.example.myapplication.api.ApiInterface;
+import com.example.myapplication.utils.AudioLab;
+import com.example.myapplication.model.GetResponse;
+import com.example.myapplication.R;
+import com.example.myapplication.model.RealAudio;
 import com.example.myapplication.utils.Tools;
 
 import java.util.List;
@@ -28,8 +33,8 @@ import retrofit2.Response;
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView       mMainList;
-    private AudioAdapter       mAdapter;
-    private AudioLab           mAudioLab;
+    private AudioAdapter mAdapter;
+    private AudioLab     mAudioLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

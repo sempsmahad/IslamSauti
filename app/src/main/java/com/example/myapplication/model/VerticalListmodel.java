@@ -1,4 +1,6 @@
-package com.example.myapplication;
+package com.example.myapplication.model;
+
+import com.example.myapplication.model.RealAudio;
 
 import java.util.ArrayList;
 

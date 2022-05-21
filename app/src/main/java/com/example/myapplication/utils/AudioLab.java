@@ -1,6 +1,8 @@
-package com.example.myapplication;
+package com.example.myapplication.utils;
 
 import android.content.Context;
+
+import com.example.myapplication.model.RealAudio;
 
 import java.util.ArrayList;
 import java.util.List;

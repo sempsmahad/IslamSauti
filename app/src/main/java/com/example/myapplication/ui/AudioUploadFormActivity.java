@@ -1,4 +1,4 @@
-package com.example.myapplication.activities;
+package com.example.myapplication.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,13 +24,11 @@ import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.example.myapplication.ApiClient;
-import com.example.myapplication.ApiInterface;
-import com.example.myapplication.Audio;
-import com.example.myapplication.FileUtil;
-import com.example.myapplication.ListActivity;
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.ProgressRequestBody;
+import com.example.myapplication.api.ApiClient;
+import com.example.myapplication.api.ApiInterface;
+import com.example.myapplication.model.Audio;
+import com.example.myapplication.utils.FileUtil;
+import com.example.myapplication.utils.ProgressRequestBody;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.Tools;

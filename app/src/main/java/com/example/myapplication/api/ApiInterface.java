@@ -1,4 +1,7 @@
-package com.example.myapplication;
+package com.example.myapplication.api;
+
+import com.example.myapplication.model.Audio;
+import com.example.myapplication.model.GetResponse;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
