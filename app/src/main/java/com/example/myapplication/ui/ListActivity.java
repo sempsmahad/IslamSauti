@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.myapplication.activities.AudioUploadFormActivity;
+import com.example.myapplication.api.ApiClient;
+import com.example.myapplication.api.ApiInterface;
+import com.example.myapplication.utils.AudioLab;
+import com.example.myapplication.model.GetResponse;
+import com.example.myapplication.R;
+import com.example.myapplication.model.RealAudio;
 import com.example.myapplication.utils.Tools;
 
 import java.util.List;
@@ -42,7 +47,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
         mAudioLab = AudioLab.get(this);
-        loadAudios();
+//        loadAudios();
     }
 
     private void initToolbar() {
@@ -97,13 +102,13 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                for (RealAudio audio : response.body().audios) {
+                for (RealAudio audio : response.body().getAudios()) {
                     RealAudio ad = new RealAudio();
-                    ad.setName(audio.name);
-                    ad.setDate(audio.date);
-                    ad.setTopic(audio.topic);
-                    ad.setId((int) audio.id);
-                    ad.setUrl(audio.url);
+                    ad.setName(audio.getName());
+                    ad.setDate(audio.getDate());
+                    ad.setTopic(audio.getTopic());
+                    ad.setId((int) audio.getId());
+                    ad.setUrl(audio.getUrl());
                     mAudioLab.addAudio(ad);
                 }
                 updateUI();
@@ -120,7 +125,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        loadAudios();
+//        loadAudios();
     }
 
 

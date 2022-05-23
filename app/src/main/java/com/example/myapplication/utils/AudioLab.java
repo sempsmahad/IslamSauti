@@ -1,6 +1,8 @@
-package com.example.myapplication;
+package com.example.myapplication.utils;
 
 import android.content.Context;
+
+import com.example.myapplication.model.RealAudio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class AudioLab {
         ArrayList<Integer> ids   = new ArrayList<>();
         int                count = 0;
         for (RealAudio realAudio : mRealAudios) {
-            ids.add(realAudio.id);
+            ids.add(realAudio.getId());
         }
         if (!ids.contains(a.getId())) {
             mRealAudios.add(a);
