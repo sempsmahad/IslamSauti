@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,12 +19,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.api.ApiClient;
 import com.example.myapplication.api.ApiInterface;
+import com.example.myapplication.model.Summon;
 import com.example.myapplication.utils.AudioLab;
 import com.example.myapplication.model.GetResponse;
 import com.example.myapplication.R;
 import com.example.myapplication.model.RealAudio;
+import com.example.myapplication.utils.SummonLab;
 import com.example.myapplication.utils.Tools;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,8 +37,9 @@ import retrofit2.Response;
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView       mMainList;
-    private AudioAdapter       mAdapter;
+    private SummonAdapter       mAdapter;
     private AudioLab           mAudioLab;
+    private SummonLab          mSummonLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,8 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
         mAudioLab = AudioLab.get(this);
-//        loadAudios();
+        mSummonLab = SummonLab.get(this);
+        loadAudios();
     }
 
     private void initToolbar() {
@@ -85,11 +91,10 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     private void updateUI() {
-        AudioLab        audioLab = AudioLab.get(ListActivity.this);
-        List<RealAudio> audios   = audioLab.getRealAudios();
-        //Toast.makeText(this, audios.get(1).getTopic(), Toast.LENGTH_SHORT).show();
+        SummonLab        summonLab = SummonLab.get(ListActivity.this);
+        List<Summon> summons   = summonLab.getRealSummons();
         if (mAdapter == null) {
-            mAdapter = new AudioAdapter(audios);
+            mAdapter = new SummonAdapter(summons);
             mMainList.setAdapter(mAdapter);
         } else {
             mAdapter.notifyDataSetChanged();
@@ -102,21 +107,25 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                for (RealAudio audio : response.body().getAudios()) {
-                    RealAudio ad = new RealAudio();
-                    ad.setName(audio.getName());
-                    ad.setDate(audio.getDate());
-                    ad.setTopic(audio.getTopic());
-                    ad.setId((int) audio.getId());
-                    ad.setUrl(audio.getUrl());
-                    mAudioLab.addAudio(ad);
+                if (response.isSuccessful()){
+
+                    assert response.body() != null;
+                    ArrayList<Summon> summons = response.body().getSummons();
+                    for (Summon summon : summons) {
+                        mSummonLab.addSummon(summon);
+                    }
+                    updateUI();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }else{
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(ListActivity.this, "No summons", Toast.LENGTH_SHORT).show();
                 }
-                updateUI();
-                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Call<GetResponse> call, Throwable t) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(ListActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -125,20 +134,20 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-//        loadAudios();
+        loadAudios();
     }
 
 
-    private class AudioHolder extends RecyclerView.ViewHolder
+    private class SummonHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        private RealAudio mRealAudio;
+        private Summon mSummon;
 
         private TextView mNameTextView;
         private TextView mDateTextView;
         private TextView mTopicTextView;
 
-        public AudioHolder(LayoutInflater inflater, ViewGroup parent) {
+        public SummonHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.single_audio_view, parent, false));
             itemView.setOnClickListener(this);
 
@@ -147,13 +156,12 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
             mTopicTextView = itemView.findViewById(R.id.tv_topic);
         }
 
-        public void bind(RealAudio realAudio) {
-            mRealAudio = realAudio;
-            mNameTextView.setText(mRealAudio.getName());
-            mDateTextView.setText(mRealAudio.getDate());
-            mTopicTextView.setText(mRealAudio.getTopic());
+        public void bind(Summon summon) {
+            mSummon = summon;
+            mNameTextView.setText(mSummon.getName());
+            mDateTextView.setText(mSummon.getCreated_at());
+            mTopicTextView.setText(mSummon.getTopic());
         }
-
 
         @Override
         public void onClick(View v) {
@@ -161,29 +169,29 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private class AudioAdapter extends RecyclerView.Adapter<AudioHolder> {
-        private List<RealAudio> mRealAudios;
+    private class SummonAdapter extends RecyclerView.Adapter<SummonHolder> {
+        private List<Summon> mSummons;
 
-        public AudioAdapter(List<RealAudio> realAudios) {
-            mRealAudios = realAudios;
+        public SummonAdapter(List<Summon> summons) {
+            mSummons = summons;
         }
 
         @NonNull
         @Override
-        public AudioHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public SummonHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(ListActivity.this);
-            return new AudioHolder(layoutInflater, parent);
+            return new SummonHolder(layoutInflater, parent);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull AudioHolder holder, int position) {
-            RealAudio realAudio = mRealAudios.get(position);
-            holder.bind(realAudio);
+        public void onBindViewHolder(@NonNull SummonHolder holder, int position) {
+            Summon summon = mSummons.get(position);
+            holder.bind(summon);
         }
 
         @Override
         public int getItemCount() {
-            return mRealAudios.size();
+            return mSummons.size();
         }
     }
 

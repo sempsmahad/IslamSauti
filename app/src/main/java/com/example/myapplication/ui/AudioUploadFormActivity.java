@@ -27,6 +27,7 @@ import androidx.cardview.widget.CardView;
 import com.example.myapplication.api.ApiClient;
 import com.example.myapplication.api.ApiInterface;
 import com.example.myapplication.model.Audio;
+import com.example.myapplication.model.Summon;
 import com.example.myapplication.utils.FileUtil;
 import com.example.myapplication.utils.ProgressRequestBody;
 import com.example.myapplication.R;
@@ -97,8 +98,8 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     private ImageView   icon_download;
     private CardView    card_view;
     private Runnable    runnable;
-    private Uri         path = null;
-    private Call<Audio> call;
+    private Uri          path = null;
+    private Call<Summon> call;
 
 
     private ButtonState buttonState = ButtonState.NORMAL;
@@ -427,10 +428,10 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         call = apiInterface.uploadAudio(descTitle,descTopic,descName,descDesc,descDate, filePart);
 
-        call.enqueue(new Callback<Audio>() {
+        call.enqueue(new Callback<Summon>() {
             @Override
-            public void onResponse(Call<Audio> call, Response<Audio> response) {
-                if (!response.body().error) {
+            public void onResponse(Call<Summon> call, Response<Summon> response) {
+                if (response.isSuccessful()) {
                     Toast.makeText(AudioUploadFormActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
@@ -438,7 +439,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
             }
 
             @Override
-            public void onFailure(Call<Audio> call, Throwable t) {
+            public void onFailure(Call<Summon> call, Throwable t) {
                 if (call.isCanceled()) {
                     Toast.makeText(AudioUploadFormActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
                 } else {
