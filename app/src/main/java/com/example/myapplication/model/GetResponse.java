@@ -2,17 +2,18 @@ package com.example.myapplication.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetResponse {
-    @SerializedName("audios")
-    List<RealAudio> audios;
+    @SerializedName("summons")
+    ArrayList<Summon> summons;
 
-    public List<RealAudio> getAudios() {
-        return audios;
+    public ArrayList<Summon> getSummons() {
+        return summons;
     }
 
-    public void setAudios(List<RealAudio> audios) {
-        this.audios = audios;
+    public void setSummons(ArrayList<Summon> summons) {
+        this.summons = summons;
     }
 }
