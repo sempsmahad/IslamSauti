@@ -161,9 +161,9 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         bt_play               = findViewById(R.id.bt_play);
         btn_attach            = findViewById(R.id.btn_attach);
         et_title              = findViewById(R.id.et_title);
-        et_description        = findViewById(R.id.et_description);
         et_topic              = findViewById(R.id.et_topic);
         et_sheikh_name        = findViewById(R.id.et_sheikh_name);
+        et_description        = findViewById(R.id.et_description);
         et_date               = findViewById(R.id.bt_exp_date);
 
         Calendar calendar = new GregorianCalendar(Locale.getDefault());
@@ -408,22 +408,24 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     }
 
     public void upload(View view) {
-        String shekName    = et_sheikh_name.getText().toString().trim();
+        String title       = et_title.getText().toString().trim();
         String topic       = et_topic.getText().toString().trim();
-        String date        = et_date.getText().toString().trim();
+        String shekName    = et_sheikh_name.getText().toString().trim();
         String description = et_description.getText().toString().trim();
+        String date        = et_date.getText().toString().trim();
 
         File        file      = new File(FileUtil.getPath(path, this));
+        RequestBody descTitle = RequestBody.create(MediaType.parse("text/plain"), title);
         RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
-        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
         RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
         RequestBody descDesc  = RequestBody.create(MediaType.parse("text/plain"), description);
+        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
 
         ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", AudioUploadFormActivity.this);
         MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
+        call = apiInterface.uploadAudio(descTitle,descTopic,descName,descDesc,descDate, filePart);
 
         call.enqueue(new Callback<Audio>() {
             @Override

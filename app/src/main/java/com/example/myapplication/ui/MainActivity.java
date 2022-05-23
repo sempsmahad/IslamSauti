@@ -143,46 +143,48 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     public void upload(View view) {
-        btnCancel.setVisibility(View.VISIBLE);
-        btnUpload.setVisibility(View.INVISIBLE);
-
-        String      shekName  = etName.getText().toString().trim();
-        String      topic     = etTopic.getText().toString().trim();
-        String      date      = etDate.getText().toString().trim();
-        File        file      = new File(FileUtil.getPath(path, this));
-        RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
-        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
-        RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
-
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", MainActivity.this);
-        MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
-
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
-
-        call.enqueue(new Callback<Audio>() {
-            @Override
-            public void onResponse(Call<Audio> call, Response<Audio> response) {
-                if (!response.body().error) {
-                    Toast.makeText(MainActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Audio> call, Throwable t) {
-                if (call.isCanceled()) {
-                    Toast.makeText(MainActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
-                    btnCancel.setVisibility(View.INVISIBLE);
-                    btnUpload.setVisibility(View.VISIBLE);
-                } else {
-                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-                    btnCancel.setVisibility(View.INVISIBLE);
-                    btnUpload.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+//        btnCancel.setVisibility(View.VISIBLE);
+//        btnUpload.setVisibility(View.INVISIBLE);
+//
+//        String      shekName  = etName.getText().toString().trim();
+//        String      topic     = etTopic.getText().toString().trim();
+//        String      date      = etDate.getText().toString().trim();
+//        File        file      = new File(FileUtil.getPath(path, this));
+//        RequestBody descTitle = RequestBody.create(MediaType.parse("text/plain"), title);
+//        RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
+//        RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);
+//        RequestBody descDesc  = RequestBody.create(MediaType.parse("text/plain"), description);
+//        RequestBody descDate  = RequestBody.create(MediaType.parse("text/plain"), date);
+//
+//        ProgressRequestBody fileBody = new ProgressRequestBody(file, "audio", MainActivity.this);
+//        MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
+//
+//        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//        call = apiInterface.uploadAudio(descName, descDate, descTopic, filePart);
+//
+//        call.enqueue(new Callback<Audio>() {
+//            @Override
+//            public void onResponse(Call<Audio> call, Response<Audio> response) {
+//                if (!response.body().error) {
+//                    Toast.makeText(MainActivity.this, "File Uploaded Successfully...", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "uploading Failed", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Audio> call, Throwable t) {
+//                if (call.isCanceled()) {
+//                    Toast.makeText(MainActivity.this, "request was cancelled", Toast.LENGTH_SHORT).show();
+//                    btnCancel.setVisibility(View.INVISIBLE);
+//                    btnUpload.setVisibility(View.VISIBLE);
+//                } else {
+//                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//                    btnCancel.setVisibility(View.INVISIBLE);
+//                    btnUpload.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
     }
 
     @Override

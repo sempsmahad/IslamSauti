@@ -14,7 +14,13 @@ import retrofit2.http.Part;
 public interface ApiInterface {
     @Multipart
     @POST("summons/uploads")
-    Call<Audio> uploadAudio(@Part("name") RequestBody name, @Part("date") RequestBody date, @Part("topic") RequestBody topic, @Part MultipartBody.Part audio);
+    Call<Audio> uploadAudio(
+            @Part("title") RequestBody title,
+            @Part("topic") RequestBody topic,
+            @Part("name") RequestBody name,
+            @Part("description") RequestBody description,
+            @Part("creation_date") RequestBody date,
+            @Part MultipartBody.Part audio);
 
     @GET("read.php")
     Call<GetResponse> readAudioList();
