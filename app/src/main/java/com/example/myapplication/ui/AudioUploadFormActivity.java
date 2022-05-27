@@ -95,9 +95,9 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     private Handler     mUploadBtnHandler;
     private View        button_action;
     private TextView    tv_status, tv_download;
-    private ImageView   icon_download;
-    private CardView    card_view;
-    private Runnable    runnable;
+    private ImageView    icon_download;
+    private CardView     card_view;
+    private Runnable     runnable;
     private Uri          path = null;
     private Call<Summon> call;
 
@@ -125,6 +125,24 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         initToolbar();
         initComponent();
 
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type   = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if (type.startsWith("audio/")) {
+                handleSendAudio(intent); // Handle text being sent
+            }
+        }
+
+    }
+
+    private void handleSendAudio(Intent intent) {
+        Uri audioUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (audioUri != null) {
+            onGetPath(audioUri);
+        }
     }
 
     private void initToolbar() {
@@ -156,7 +174,6 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     }
 
     private void initComponent() {
-
         parent_view           = findViewById(R.id.parent_view);
         seek_song_progressbar = findViewById(R.id.seek_song_progressbar);
         bt_play               = findViewById(R.id.bt_play);
@@ -426,7 +443,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         MultipartBody.Part  filePart = MultipartBody.Part.createFormData("audio", file.getName(), fileBody);
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        call = apiInterface.uploadAudio(descTitle,descTopic,descName,descDesc,descDate, filePart);
+        call = apiInterface.uploadAudio(descTitle, descTopic, descName, descDesc, descDate, filePart);
 
         call.enqueue(new Callback<Summon>() {
             @Override
