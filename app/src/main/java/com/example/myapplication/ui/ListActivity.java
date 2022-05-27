@@ -1,12 +1,15 @@
 package com.example.myapplication.ui;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.example.myapplication.utils.AudioLab;
 import com.example.myapplication.model.GetResponse;
 import com.example.myapplication.R;
 import com.example.myapplication.model.RealAudio;
+import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.SummonLab;
 import com.example.myapplication.utils.Tools;
 
@@ -37,9 +41,15 @@ import retrofit2.Response;
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView       mMainList;
-    private SummonAdapter       mAdapter;
+    private SummonAdapter      mAdapter;
     private AudioLab           mAudioLab;
     private SummonLab          mSummonLab;
+    private ImageButton bt_play;
+    private     MediaPlayer mp;
+    private Handler     mHandler = new Handler();
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +57,18 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_list);
         initToolbar();
 
+
         mMainList           = findViewById(R.id.audio_list);
         mSwipeRefreshLayout = findViewById(R.id.swipe_container);
+        bt_play = findViewById(R.id.bt_play);
+        song_progressbar = findViewById(R.id.song_progressbar);
+        song_progressbar.setProgress(0);
+        song_progressbar.setMax(MusicUtils.MAX_PROGRESS);
+
+
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
-        mAudioLab = AudioLab.get(this);
+        mAudioLab  = AudioLab.get(this);
         mSummonLab = SummonLab.get(this);
         loadAudios();
     }
@@ -91,7 +108,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     private void updateUI() {
-        SummonLab        summonLab = SummonLab.get(ListActivity.this);
+        SummonLab    summonLab = SummonLab.get(ListActivity.this);
         List<Summon> summons   = summonLab.getRealSummons();
         if (mAdapter == null) {
             mAdapter = new SummonAdapter(summons);
@@ -107,7 +124,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     assert response.body() != null;
                     ArrayList<Summon> summons = response.body().getSummons();
@@ -116,7 +133,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
                     }
                     updateUI();
                     mSwipeRefreshLayout.setRefreshing(false);
-                }else{
+                } else {
                     mSwipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(ListActivity.this, "No summons", Toast.LENGTH_SHORT).show();
                 }
@@ -137,30 +154,29 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         loadAudios();
     }
 
-
     private class SummonHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         private Summon mSummon;
 
-        private TextView mNameTextView;
-        private TextView mDateTextView;
-        private TextView mTopicTextView;
+        private TextView mNameTextView, mDateTextView, mTopicTextView, mTitleTextView;
 
         public SummonHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.single_audio_view, parent, false));
+            super(inflater.inflate(R.layout.item_list, parent, false));
             itemView.setOnClickListener(this);
 
-            mNameTextView  = itemView.findViewById(R.id.tv_name);
-            mDateTextView  = itemView.findViewById(R.id.tv_date);
-            mTopicTextView = itemView.findViewById(R.id.tv_topic);
+            mNameTextView  = itemView.findViewById(R.id.text);
+            mTitleTextView = itemView.findViewById(R.id.title);
+//          mDateTextView  = itemView.findViewById(R.id.tv_date);
+//          mTopicTextView = itemView.findViewById(R.id.tv_topic);
         }
 
         public void bind(Summon summon) {
             mSummon = summon;
             mNameTextView.setText(mSummon.getName());
-            mDateTextView.setText(mSummon.getCreated_at());
-            mTopicTextView.setText(mSummon.getTopic());
+            mTitleTextView.setText(mSummon.getTitle());
+//          mDateTextView.setText(mSummon.getCreated_at());
+//          mTopicTextView.setText(mSummon.getTopic());
         }
 
         @Override
