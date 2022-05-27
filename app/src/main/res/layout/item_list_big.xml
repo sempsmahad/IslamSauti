@@ -93,4 +93,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?attr/colorControlNormal" />
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grey_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageTextContainer" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@
     android:layout_marginStart="1dp"
     android:layout_marginEnd="1dp"
     android:background="?rectSelector"
+    android:id="@+id/lyt_parent"
     android:layout_marginVertical="2dp"
     android:clickable="true"
     android:focusable="true"
@@ -94,5 +95,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?attr/colorControlNormal" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:background="@color/grey_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageTextContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
