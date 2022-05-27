@@ -5,14 +5,18 @@
 
 <style name="AppTheme.Material" parent="BaseTheme.Material" />
 
-<style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+<style name="BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="windowActionModeOverlay">true</item>
+    <item name="android:fontFamily">@font/montserrat</item>
     <item name="android:actionModeBackground">@color/blue_grey_600</item>
     <item name="android:dialogTheme">@style/Dialog.Theme</item>
+    <item name="rectSelector">@drawable/rect_selector</item>
+    <item name="roundSelector">@drawable/round_selector</item>
+
 </style>
 
 <style name="BaseTheme.Material" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -262,6 +266,28 @@
 <style name="TextAppearance.AppCompat.Subhead.Bold" parent="@style/TextAppearance.AppCompat.Subhead">
     <item name="android:textStyle">bold</item>
 </style>
+
+    <style name="TextViewSubtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+
+    <style name="TextViewSubtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+
+    <style name="TextViewBody2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+
+    <style name="OverFlowButton">
+        <item name="srcCompat">@drawable/ic_more_vert</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?attr/roundSelector</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:focusable">false</item>
+    </style>
 
 </resources>
 

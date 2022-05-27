@@ -338,6 +338,10 @@
         <item type="color">#607d8b</item>
         <item type="color">#ff9800</item>
     </array>
+    <color name="md_white_1000">#FFFFFF</color>
+    <color name="md_green_500">#4CAF50</color>
+
+
 
 </resources>
 

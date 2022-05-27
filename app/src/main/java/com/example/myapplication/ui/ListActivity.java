@@ -1,12 +1,17 @@
 package com.example.myapplication.ui;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +28,10 @@ import com.example.myapplication.model.Summon;
 import com.example.myapplication.utils.AudioLab;
 import com.example.myapplication.model.GetResponse;
 import com.example.myapplication.R;
-import com.example.myapplication.model.RealAudio;
+import com.example.myapplication.utils.MusicUtils;
 import com.example.myapplication.utils.SummonLab;
 import com.example.myapplication.utils.Tools;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +43,17 @@ import retrofit2.Response;
 public class ListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView       mMainList;
-    private SummonAdapter       mAdapter;
+    private SummonAdapter      mAdapter;
     private AudioLab           mAudioLab;
     private SummonLab          mSummonLab;
+    private ImageButton        bt_play;
+    private MediaPlayer        mp;
+    private Handler            mHandler = new Handler();
+    private View               parent_view, view_mini_player;
+    private ProgressBar song_progressbar;
+    private MusicUtils  utils;
+    private TextView    mini_player_title, mini_player_text;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +61,106 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_list);
         initToolbar();
 
+        parent_view      = findViewById(R.id.parent_view);
+        view_mini_player = findViewById(R.id.view_mini_player);
+        mini_player_title = findViewById(R.id.title);
+        mini_player_text = findViewById(R.id.text);
+
         mMainList           = findViewById(R.id.audio_list);
         mSwipeRefreshLayout = findViewById(R.id.swipe_container);
+        bt_play             = findViewById(R.id.bt_play);
+        song_progressbar    = findViewById(R.id.song_progressbar);
+        song_progressbar.setProgress(0);
+        song_progressbar.setMax(MusicUtils.MAX_PROGRESS);
+
+        mp = new MediaPlayer();
+        mp.setOnCompletionListener(mp -> {
+            bt_play.setImageResource(R.drawable.ic_play_arrow);
+        });
+        utils = new MusicUtils();
+        buttonPlayerAction();
+
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mMainList.setLayoutManager(new LinearLayoutManager(this));
-        mAudioLab = AudioLab.get(this);
+        mAudioLab  = AudioLab.get(this);
         mSummonLab = SummonLab.get(this);
         loadAudios();
+    }
+
+    private void loadAudio(Summon summon) {
+        try {
+            mp.reset();
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//            AssetFileDescriptor afd = getAssets().openFd("short_music.mp3");
+            mp.setDataSource(summon.getAudio());
+//            afd.close();
+            mp.prepare();
+            bt_play.callOnClick();
+        } catch (Exception e) {
+            Snackbar.make(parent_view, "Cannot load audio file", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+
+    /**
+     * Play button click event plays a song and changes button to pause image
+     * pauses a song and changes button to play image
+     */
+    private void buttonPlayerAction() {
+        bt_play.setOnClickListener(arg0 -> {
+            // check for already playing
+            if (mp.isPlaying()) {
+                mp.pause();
+                // Changing button image to play button
+                bt_play.setImageResource(R.drawable.ic_play_arrow);
+            } else {
+                // Resume song
+                mp.start();
+                // Changing button image to pause button
+                bt_play.setImageResource(R.drawable.ic_pause);
+                mHandler.post(mUpdateTimeTask);
+            }
+
+        });
+    }
+
+    /**
+     * Background Runnable thread
+     */
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            updateTimerAndSeekbar();
+            // Running this thread after 10 milliseconds
+            if (mp.isPlaying()) {
+                mHandler.postDelayed(this, 100);
+            }
+        }
+    };
+
+    private void updateTimerAndSeekbar() {
+        long totalDuration   = mp.getDuration();
+        long currentDuration = mp.getCurrentPosition();
+
+        // Updating progress bar
+        int progress = utils.getProgressSeekBar(currentDuration, totalDuration);
+        song_progressbar.setProgress(progress);
+    }
+
+    public void controlClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.bt_expand: {
+                Snackbar.make(parent_view, "Expand", Snackbar.LENGTH_SHORT).show();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        mp.release();
     }
 
     private void initToolbar() {
@@ -91,11 +198,22 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     private void updateUI() {
-        SummonLab        summonLab = SummonLab.get(ListActivity.this);
+        SummonLab    summonLab = SummonLab.get(ListActivity.this);
         List<Summon> summons   = summonLab.getRealSummons();
         if (mAdapter == null) {
-            mAdapter = new SummonAdapter(summons);
+            mAdapter = new SummonAdapter(this, summons);
             mMainList.setAdapter(mAdapter);
+            mAdapter.setOnItemClickListener((view, obj, position) -> {
+//                        Snackbar.make(parent_view, "Item " + obj.getName() + " clicked", Snackbar.LENGTH_SHORT).show();
+                loadAudio(obj);
+                view_mini_player.setVisibility(View.VISIBLE);
+                mini_player_text.setText(obj.getName());
+                mini_player_title.setText(obj.getTitle());
+            });
+
+
+            mAdapter.setOnMoreButtonClickListener((view, obj, item) -> Snackbar.make(parent_view, obj.getName() + " (" + item.getTitle() + ") clicked", Snackbar.LENGTH_SHORT).show());
+
         } else {
             mAdapter.notifyDataSetChanged();
         }
@@ -107,7 +225,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
         call.enqueue(new Callback<GetResponse>() {
             @Override
             public void onResponse(Call<GetResponse> call, Response<GetResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     assert response.body() != null;
                     ArrayList<Summon> summons = response.body().getSummons();
@@ -116,7 +234,7 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
                     }
                     updateUI();
                     mSwipeRefreshLayout.setRefreshing(false);
-                }else{
+                } else {
                     mSwipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(ListActivity.this, "No summons", Toast.LENGTH_SHORT).show();
                 }
@@ -135,64 +253,6 @@ public class ListActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         loadAudios();
-    }
-
-
-    private class SummonHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-
-        private Summon mSummon;
-
-        private TextView mNameTextView;
-        private TextView mDateTextView;
-        private TextView mTopicTextView;
-
-        public SummonHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.single_audio_view, parent, false));
-            itemView.setOnClickListener(this);
-
-            mNameTextView  = itemView.findViewById(R.id.tv_name);
-            mDateTextView  = itemView.findViewById(R.id.tv_date);
-            mTopicTextView = itemView.findViewById(R.id.tv_topic);
-        }
-
-        public void bind(Summon summon) {
-            mSummon = summon;
-            mNameTextView.setText(mSummon.getName());
-            mDateTextView.setText(mSummon.getCreated_at());
-            mTopicTextView.setText(mSummon.getTopic());
-        }
-
-        @Override
-        public void onClick(View v) {
-
-        }
-    }
-
-    private class SummonAdapter extends RecyclerView.Adapter<SummonHolder> {
-        private List<Summon> mSummons;
-
-        public SummonAdapter(List<Summon> summons) {
-            mSummons = summons;
-        }
-
-        @NonNull
-        @Override
-        public SummonHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(ListActivity.this);
-            return new SummonHolder(layoutInflater, parent);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull SummonHolder holder, int position) {
-            Summon summon = mSummons.get(position);
-            holder.bind(summon);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSummons.size();
-        }
     }
 
 
