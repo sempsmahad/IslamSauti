@@ -29,6 +29,7 @@ import com.example.myapplication.api.ApiInterface;
 import com.example.myapplication.model.Audio;
 import com.example.myapplication.model.Summon;
 import com.example.myapplication.utils.FileUtil;
+import com.example.myapplication.utils.FileUtils2;
 import com.example.myapplication.utils.ProgressRequestBody;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.MusicUtils;
@@ -129,6 +130,8 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         Intent intent = getIntent();
         String action = intent.getAction();
         String type   = intent.getType();
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("audio/")) {
@@ -141,6 +144,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
     private void handleSendAudio(Intent intent) {
         Uri audioUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (audioUri != null) {
+            path = audioUri;
             onGetPath(audioUri);
         }
     }
@@ -373,6 +377,7 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         String fileName = getFileName(mPath);
         et_title.setText(fileName);
 
+
     }
 
     private String getFileName(Uri urim) throws IllegalArgumentException {
@@ -432,7 +437,8 @@ public class AudioUploadFormActivity extends AppCompatActivity implements Progre
         String description = et_description.getText().toString().trim();
         String date        = et_date.getText().toString().trim();
 
-        File        file      = new File(FileUtil.getPath(path, this));
+//        File        file      = new File(FileUtil.getPath(path, this));
+        File        file      = new File(new FileUtils2(this).getPath(path));
         RequestBody descTitle = RequestBody.create(MediaType.parse("text/plain"), title);
         RequestBody descTopic = RequestBody.create(MediaType.parse("text/plain"), topic);
         RequestBody descName  = RequestBody.create(MediaType.parse("text/plain"), shekName);

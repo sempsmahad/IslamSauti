@@ -57,11 +57,19 @@ public class FileUtil {
         }
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             String[] projection = {
-                    MediaStore.Images.Media.DATA
+                    MediaStore.Audio.Media.DATA
             };
             try (Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//                    https://stackoverflow.com/a/41520090/8872691
+//                    if ("image".equals(type)) {
+//                        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//                    } else if ("video".equals(type)) {
+//                        uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+//                    } else if ("audio".equals(type)) {
+//                        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//                    }
+                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
                     return cursor.getString(columnIndex);
                 }
             } catch (Exception e) {
